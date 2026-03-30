@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NMA6 Smart Saraban</title>
+</head>
+<body style="font-family:sans-serif;text-align:center;margin-top:100px;">
+
+  <h1>📬 ระบบรับ-ส่งหนังสือราชการ</h1>
+  <p>สพป.นครราชสีมา เขต 6</p>
+
+  <button onclick="login()" style="padding:15px 25px;font-size:18px;">
+    🔐 เข้าสู่ระบบด้วย Google
+  </button>
+
+  <div id="user" style="margin-top:30px;font-size:18px;color:green;"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <script>
+    const supabase = supabase.createClient(
+      "https://yzfxiphmlowagmlxtmdr.supabase.co",
+      "sb_publishable_9RG_9InGSXNYvlIKmZW61A_dwfGkGDs"
+    );
+
+    async function login() {
+      await supabase.auth.signInWithOAuth({
+        provider: 'google'
+      });
+    }
+
+    async function checkUser() {
+      const { data } = await supabase.auth.getUser();
+
+      if (data.user) {
+        const email = data.user.email;
+
+        if (!email.endsWith("@nma6.go.th")) {
+          alert("กรุณาใช้เมลองค์กร");
+          await supabase.auth.signOut();
+          return;
+        }
+
+        document.getElementById("user").innerHTML =
+          "✅ เข้าสู่ระบบแล้ว: " + email;
+      }
+    }
+
+    checkUser();
+  </script>
+
+</body>
+</html>
